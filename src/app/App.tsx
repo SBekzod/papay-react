@@ -16,6 +16,7 @@ import { NavbarHome } from "./components/header";
 import { NavbarRestaurant } from "./components/header/restaurant";
 import { NavbarOthers } from "./components/header/others";
 import { Footer } from "./components/footer";
+import AuthenticationModal from "./components/auth";
 
 function App() {
   const [path, setPath] = useState();
@@ -56,6 +57,8 @@ function App() {
       </Switch>
 
       <Footer />
+
+      <AuthenticationModal />
     </Router>
   );
 }
