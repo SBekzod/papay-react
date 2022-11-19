@@ -73,7 +73,7 @@ export default function AuthenticationModal(props: any) {
       window.location.reload;
     } catch (err) {
       console.log(err);
-      sweetErrorHandling(err).then;
+      sweetErrorHandling(err).then();
     }
   };
 
@@ -95,7 +95,7 @@ export default function AuthenticationModal(props: any) {
     } catch (err) {
       console.log(err);
       props.handleLoginClose();
-      sweetErrorHandling(err).then;
+      sweetErrorHandling(err).then();
     }
   };
 
