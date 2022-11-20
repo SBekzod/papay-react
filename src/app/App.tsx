@@ -26,7 +26,7 @@ import {
 import { Definer } from "../lib/Definer";
 import assert from "assert";
 import MemberApiService from "./apiServices/memberApiService";
-import "../app/apiServices/verify";
+import "./apiServices/verify";
 
 function App() {
   /** INITIALIZATIONS */
