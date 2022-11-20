@@ -8,7 +8,6 @@ import { Advertisements } from "./advertisements";
 import { Events } from "./events";
 import { Recommendations } from "./recommendations";
 import "../../../css/home.css";
-
 // REDUX
 import { useDispatch, useSelector } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
