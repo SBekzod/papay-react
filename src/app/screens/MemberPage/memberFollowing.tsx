@@ -34,6 +34,8 @@ export function MemberFollowing(props: any) {
   const { setMemberFollowings } = actionDispatch(useDispatch());
   const { memberFollowings } = useSelector(memberFollowingsRetriever);
 
+  // setMemberFollowings
+
   return (
     <Stack>
       {followings.map((following) => {
