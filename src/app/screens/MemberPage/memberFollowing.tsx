@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, Pagination, PaginationItem, Stack } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import assert from "assert";
+import { Definer } from "../../../lib/Definer";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 // REDUX
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 import { Dispatch } from "@reduxjs/toolkit";
 import { setMemberFollowings } from "./slice";
 import { retriveMemberFollowings } from "./selector";
-import { Follower, Following } from "../../../types/follow";
+import { Follower, Following, FollowSearchObj } from "../../../types/follow";
+import FollowApiService from "../../apiServices/followApiService";
+import {
+  sweetErrorHandling,
+  sweetTopSmallSuccessAlert,
+} from "../../../lib/sweetAlert";
+import { serverApi } from "../../../lib/config";
 
 /** REDUX SLICE */
 const actionDispatch = (dispach: Dispatch) => ({
@@ -23,23 +33,50 @@ const memberFollowingsRetriever = createSelector(
   })
 );
 
-const followings = [
-  { mb_nick: "ravshan" },
-  { mb_nick: "ulugbek" },
-  { mb_nick: "temur" },
-];
-
 export function MemberFollowing(props: any) {
   /** INITIALIZATIONS **/
+  const { mb_id, followeRebuild, setFollowRebuild } = props;
   const { setMemberFollowings } = actionDispatch(useDispatch());
   const { memberFollowings } = useSelector(memberFollowingsRetriever);
+  const [followingsSearchObj, setFollowingsSearchObj] =
+    useState<FollowSearchObj>({ page: 1, limit: 5, mb_id: mb_id });
 
-  // setMemberFollowings
+  useEffect(() => {
+    const followService = new FollowApiService();
+    followService
+      .getMemberFollowings(followingsSearchObj)
+      .then((data) => setMemberFollowings(data))
+      .catch((err) => console.log(err));
+  }, [followingsSearchObj, followeRebuild]);
+
+  /** HANDLERS */
+  const unsubscribeHandler = async (e: any, id: string) => {
+    try {
+      e.stopPropagation();
+      assert.ok(localStorage.getItem("member_data"), Definer.auth_err1);
+
+      const followService = new FollowApiService();
+      await followService.unsubscribe(id);
+
+      await sweetTopSmallSuccessAlert("unsubscribed successfully", 700, false);
+      setFollowRebuild(!followeRebuild);
+    } catch (err: any) {
+      console.log(err);
+      sweetErrorHandling(err).then();
+    }
+  };
+
+  const handlePaginationChange = (event: any, value: number) => {
+    followingsSearchObj.page = value;
+    setFollowingsSearchObj({ ...followingsSearchObj });
+  };
 
   return (
     <Stack>
-      {followings.map((following) => {
-        const image_url = "/auth/default_user.svg";
+      {memberFollowings.map((following: Following) => {
+        const image_url = following?.follow_member_data?.mb_image
+          ? `${serverApi}/${following.follow_member_data.mb_image}`
+          : "/auth/default_user.svg";
         return (
           <Box className={"follow_box"}>
             <Avatar alt={""} src={image_url} sx={{ width: 89, height: 89 }} />
@@ -52,8 +89,12 @@ export function MemberFollowing(props: any) {
                 height: "85%",
               }}
             >
-              <span className={"username_text"}>USER</span>
-              <span className={"name_text"}>{following.mb_nick}</span>
+              <span className={"username_text"}>
+                {following?.follow_member_data?.mb_type}
+              </span>
+              <span className={"name_text"}>
+                {following?.follow_member_data?.mb_nick}
+              </span>
             </div>
 
             {props.actions_enabled && (
@@ -66,6 +107,7 @@ export function MemberFollowing(props: any) {
                   />
                 }
                 className={"follow_cancel_btn"}
+                onClick={(e) => unsubscribeHandler(e, following?.follow_id)}
               >
                 Bekor Qilish
               </Button>
@@ -73,6 +115,32 @@ export function MemberFollowing(props: any) {
           </Box>
         );
       })}
+      <Stack
+        sx={{ my: "40px" }}
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Box className={"bottom_box"}>
+          <Pagination
+            count={
+              followingsSearchObj.page >= 3 ? followingsSearchObj.page + 1 : 3
+            }
+            page={followingsSearchObj.page}
+            renderItem={(item) => (
+              <PaginationItem
+                components={{
+                  previous: ArrowBackIcon,
+                  next: ArrowForwardIcon,
+                }}
+                {...item}
+                color={"secondary"}
+              />
+            )}
+            onChange={handlePaginationChange}
+          />
+        </Box>
+      </Stack>
     </Stack>
   );
 }
