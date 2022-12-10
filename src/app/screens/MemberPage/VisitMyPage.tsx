@@ -43,6 +43,7 @@ import {
 } from "../../../lib/sweetAlert";
 import CommunityApiService from "../../apiServices/communityApiService";
 import MemberApiService from "../../apiServices/memberApiService";
+import { verifiedMemberData } from "../../apiServices/verify";
 
 /** REDUX SLICE */
 const actionDispatch = (dispach: Dispatch) => ({
@@ -74,7 +75,6 @@ const chosenSingleBoArticleRetriever = createSelector(
 
 export function VisitMyPage(props: any) {
   /** INITIALIZATIONS **/
-  const { verifiedMemberData } = props;
   const {
     setChosenMember,
     setChosenMemberBoArticles,
@@ -92,7 +92,7 @@ export function VisitMyPage(props: any) {
     useState<SearchMemberArticlesObj>({ mb_id: "none", page: 1, limit: 4 });
 
   useEffect(() => {
-    if (!localStorage.getItem("member_data")) {
+    if (!verifiedMemberData) {
       sweetFailureProvider("Please login first", true, true);
     }
 
@@ -188,7 +188,7 @@ export function VisitMyPage(props: any) {
                       actions_enabled={true}
                       followeRebuild={followeRebuild}
                       setFollowRebuild={setFollowRebuild}
-                      mb_id={props.verifiedMemberData?._id}
+                      mb_id={verifiedMemberData?._id}
                     />
                   </Box>
                 </TabPanel>
@@ -200,7 +200,7 @@ export function VisitMyPage(props: any) {
                       actions_enabled={true}
                       followeRebuild={followeRebuild}
                       setFollowRebuild={setFollowRebuild}
-                      mb_id={props.verifiedMemberData?._id}
+                      mb_id={verifiedMemberData?._id}
                     />
                   </Box>
                 </TabPanel>
@@ -208,7 +208,10 @@ export function VisitMyPage(props: any) {
                 <TabPanel value={"4"}>
                   <Box className={"menu_name"}>Maqola yozish</Box>
                   <Box className={"write_content"}>
-                    <TuiEditor setValue={setValue} setArticlesRebuild={setArticlesRebuild}/>
+                    <TuiEditor
+                      setValue={setValue}
+                      setArticlesRebuild={setArticlesRebuild}
+                    />
                   </Box>
                 </TabPanel>
 
@@ -316,10 +319,7 @@ export function VisitMyPage(props: any) {
                     style={{ flexDirection: "column" }}
                     value={"1"}
                     component={() => (
-                      <div
-                        className={`menu_box`}
-                        onClick={() => setValue("1")}
-                      >
+                      <div className={`menu_box`} onClick={() => setValue("1")}>
                         <img src={"/icons/post.svg"} />
                         <span>Maqolalarim</span>
                       </div>
@@ -329,10 +329,7 @@ export function VisitMyPage(props: any) {
                     style={{ flexDirection: "column" }}
                     value={"2"}
                     component={() => (
-                      <div
-                        className={`menu_box`}
-                        onClick={() => setValue("2")}
-                      >
+                      <div className={`menu_box`} onClick={() => setValue("2")}>
                         <img src={"/icons/followers.svg"} />
                         <span>Follower</span>
                       </div>
@@ -342,10 +339,7 @@ export function VisitMyPage(props: any) {
                     style={{ flexDirection: "column" }}
                     value={"3"}
                     component={() => (
-                      <div
-                        className={`menu_box`}
-                        onClick={() => setValue("3")}
-                      >
+                      <div className={`menu_box`} onClick={() => setValue("3")}>
                         <img src={"/icons/following.svg"} />
                         <span>Following</span>
                       </div>

@@ -39,6 +39,7 @@ import {
   setChosenRestaurant,
   setTargetProducts,
 } from "../../screens/RestaurantPage/slice";
+import { verifiedMemberData } from "../../apiServices/verify";
 
 /** REDUX SLICE */
 const actionDispatch = (dispach: Dispatch) => ({
@@ -131,7 +132,7 @@ export function OneRestaurant(props: any) {
 
   const targetLikeProduct = async (e: any) => {
     try {
-      assert.ok(localStorage.getItem("member_data"), Definer.auth_err1);
+      assert.ok(verifiedMemberData, Definer.auth_err1);
 
       const memberService = new MemberApiService(),
         like_result: any = await memberService.memberLikeTarget({
