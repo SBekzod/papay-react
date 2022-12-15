@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar, Box, Stack } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 
 export function CommunityChats() {
   /** INITIALIZATIONS **/
   const [messagesList, setMessagesList] = useState([]);
+
+  useEffect(() => {
+    console.log("PRINTED");
+  }, []);
 
   return (
     <Stack className={"chat_frame"}>
